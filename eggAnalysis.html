@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egg Analysis Page</title>
+<style>
+button {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+body{
+    background: linear-gradient(to bottom, #f7fafa, #d5e8e4); 
+    color: #35424a;
+}
+button:hover {
+    background-color: #45a049;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: black;
+    color: white;
+}
+tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <button onclick="navigateBack()">Back to Dashboard</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Egg ID</th>
+                <th>Quality Status</th>
+                <th>Health Status</th>
+                <th>Contamination Status</th>
+                <th>Spectral Analysis</th>
+                <th>Parent Chicken ID</th>
+                <th>Weight (g)</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be added here by JavaScript -->
+        </tbody>
+    </table>
+    <button onclick="downloadCSV()">Download Report</button>
+</div>
+<script>
+function navigateBack() {
+    window.history.back(); // Mimics navigating back to the dashboard
+}
+
+function downloadCSV() {
+    const data = generateData();
+    let csvContent = "data:text/csv;charset=utf-8," 
+        + "Egg ID,Quality Status,Health Status,Contamination Status,Spectral Analysis,Parent Chicken ID,Weight (g),Size\n"
+        + data.map(e => e.join(",")).join("\\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "egg_analysis_report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function generateData() {
+    return Array.from({ length: 30 }, (_, i) => [
+        (i + 1).toString().padStart(3, '0'), 
+        i % 2 === 0 ? 'Pass' : 'Fail', 
+        i % 4 < 2 ? 'Healthy' : 'Unhealthy',
+        i % 3 === 0 ? 'Clear' : 'Contaminated',
+        i % 5 === 0 ? 'Normal' : 'Anomaly Detected',
+        `CHKN-${(i % 10 + 1).toString().padStart(3, '0')}`,
+        Math.floor(Math.random() * 20 + 50), // Weight from 50 to 69 grams
+        i % 3 === 0 ? 'Large' : (i % 3 === 1 ? 'Medium' : 'Small')
+    ]);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const data = generateData();
+    const tableBody = document.querySelector("table tbody");
+    data.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+    });
+});
+</script>
+</body>
+</html>
